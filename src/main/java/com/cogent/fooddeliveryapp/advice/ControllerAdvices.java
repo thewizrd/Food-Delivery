@@ -84,12 +84,14 @@ public class ControllerAdvices extends ResponseEntityExceptionHandler {
 		return buildResponseEntity(apiError);
 	}
 	
+	/*
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<?> handleGenericException(Exception e) {
 		ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR);
 		apiError.setMessage(e.getMessage());
 		return buildResponseEntity(apiError);
 	}
+	*/
 	
 	private ResponseEntity<Object> buildResponseEntity(ApiError error) {
 		return ResponseEntity.status(error.getStatus()).body(error);

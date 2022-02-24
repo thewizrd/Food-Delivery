@@ -9,9 +9,11 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * WebSecurityConfig
@@ -26,7 +28,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private UserDetailsService userDetailsService;
 	@Autowired
-	private AuthEntryPointJwt authEntryPointJwt;
+	private AuthEntryPointJwt authEntryPointJwt; // Handle unauthorized exceptions
 	
 	@Bean // for customization as needed
 	public AuthTokenFilter jwtAuthTokenFilter() {
@@ -52,6 +54,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
+		//super.configure(http);
 		/*
 		 * Web Security Core
 		 * 
@@ -59,8 +62,47 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		 * Restrict unauthorized access to endpoints
 		 * Provide public access to login/register
 		 * Provide token validation
-		 * CORS:
+		 * CORS: Cross-Origin Resource Sharing
+		 * ** Allows/permits loading resources from another domain
+		 * CSRF: Cross-Site Request Forgery
 		 */
-		super.configure(http);
+		/* OLD
+		http.cors()
+			.and()
+			.csrf()
+				.disable()
+			.exceptionHandling()
+				.authenticationEntryPoint(authEntryPointJwt)
+			.and()
+			.sessionManagement()
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Using token based authentication
+			.and()
+			.authorizeRequests()
+				.antMatchers("/api/auth/**")
+					.permitAll() // any user permitted
+				.antMatchers("/api/food/**")
+					.permitAll()
+					.anyRequest()
+					.authenticated(); // end point allowed by authenticated users
+		*/
+		http.cors()
+		.and()
+		.csrf()
+			.disable()
+		.exceptionHandling()
+			.authenticationEntryPoint(authEntryPointJwt)
+		.and()
+		.sessionManagement()
+			.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Using token based authentication
+		.and()
+		.authorizeRequests()
+			.antMatchers("/api/auth/**")
+				.permitAll() // any user permitted
+			.antMatchers("/api/food/**")
+				.authenticated()
+			.anyRequest()
+				.authenticated(); // end point allowed by authenticated users
+
+		http.addFilterBefore(jwtAuthTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 	}
 }

@@ -19,6 +19,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * AuthEntryPointJwt
+ * 
+ * Handles authentication exceptions
  *
  * @author bryan
  * @date Feb 23, 2022-3:52:08 PM

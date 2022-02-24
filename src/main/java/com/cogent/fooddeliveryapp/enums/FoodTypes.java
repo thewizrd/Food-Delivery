@@ -7,8 +7,8 @@ package com.cogent.fooddeliveryapp.enums;
  * @date Feb 18, 2022-3:58:56 PM
  */
 public enum FoodTypes {
-	FOODTYPE_INDIAN,
-	FOODTYPE_CHINESE,
-	FOODTYPE_MEXICAN,
-	FOODTYPE_ITALIAN
+	INDIAN,
+	CHINESE,
+	MEXICAN,
+	ITALIAN
 }

@@ -13,6 +13,7 @@ import com.cogent.fooddeliveryapp.security.services.UserDetailsImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Header;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
@@ -43,15 +44,19 @@ public class JwtUtils {
 		Date dateNow = new Date();
 		Date expiration = new Date(dateNow.getTime() + jwtExpirationMs);
 
-		return Jwts.builder().setSubject(principal.getUsername()).setIssuedAt(dateNow).setExpiration(expiration)
-				.signWith(SignatureAlgorithm.HS512, jwtSecret).compact();
+		return Jwts.builder()
+				.setSubject(principal.getUsername())
+				.setIssuedAt(dateNow)
+				.setExpiration(expiration)
+				.signWith(SignatureAlgorithm.HS512, jwtSecret)
+				.compact();
 	}
 	
-	private Jwt<Header, Claims> parseToken(String authToken) {
+	private Jws<Claims> parseToken(String authToken) {
 		try {
 			return Jwts.parser()
 					.setSigningKey(jwtSecret) // use secret key to decrypt 
-					.parseClaimsJwt(authToken); // parses the jwt token
+					.parseClaimsJws(authToken); // parses the jwt token
 		} catch (ExpiredJwtException e) {
 			sLogger.error("JWT Token is expired: {}", e.getMessage());
 		} catch (UnsupportedJwtException e) {
@@ -73,10 +78,10 @@ public class JwtUtils {
 
 	// Get username from the token
 	public String getUsernameFromJwtToken(String authToken) {
-		Jwt<Header, Claims> jwt = parseToken(authToken);
+		Jws<Claims> jws = parseToken(authToken);
 		
-		if (jwt != null) {
-			return jwt
+		if (jws != null) {
+			return jws
 					.getBody() // gets the body of the token
 					.getSubject(); // gets the subject (username) from the token
 		}
