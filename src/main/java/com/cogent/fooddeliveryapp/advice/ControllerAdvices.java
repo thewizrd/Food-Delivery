@@ -7,6 +7,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -66,6 +67,7 @@ public class ControllerAdvices extends ResponseEntityExceptionHandler {
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
+		// @Valid - validation failed
 		ApiError apiError = new ApiError(status);
 		apiError.setMessage("Validation Error");
 		apiError.addValidationErrors(ex.getFieldErrors());
@@ -83,6 +85,15 @@ public class ControllerAdvices extends ResponseEntityExceptionHandler {
 		
 		return buildResponseEntity(apiError);
 	}
+	
+	/*
+	@ExceptionHandler(AccessDeniedException.class)
+	public ResponseEntity<?> handleAccessDeniedException(AccessDeniedException e) {
+		ApiError apiError = new ApiError(HttpStatus.FORBIDDEN);
+		apiError.setMessage(e.getMessage());
+		return buildResponseEntity(apiError);
+	}
+	*/
 	
 	/*
 	@ExceptionHandler(Exception.class)

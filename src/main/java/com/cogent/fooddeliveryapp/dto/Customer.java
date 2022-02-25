@@ -6,7 +6,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
@@ -62,7 +62,7 @@ public class Customer {
 	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
 	private Set<Address> addresses;
 
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany//(fetch = FetchType.EAGER)
 	@JoinTable(
 			name = "user_roles",
 			joinColumns = @JoinColumn(name = "customer_id"),

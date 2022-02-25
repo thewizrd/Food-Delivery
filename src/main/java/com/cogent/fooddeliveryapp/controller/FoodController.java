@@ -9,6 +9,7 @@ import javax.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,6 +42,7 @@ public class FoodController {
 	private FoodService foodService;
 	
 	@PostMapping
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<?> addFoodItem(@Valid @RequestBody FoodRequest request) {
 		Food food = new Food();
 		food.setName(request.getFoodName());
@@ -65,6 +67,7 @@ public class FoodController {
 	}
 	
 	@PutMapping("/id/{foodID}")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<?> updateFoodItemByID(@PathVariable @Min(1) int foodID, @Valid @RequestBody FoodRequest request) throws NoRecordsFoundException {
 		Food item = foodService.getFoodByID(foodID).orElseThrow(() -> {
 			return new NoRecordsFoundException("Food item with ID: " + foodID + " not found");
@@ -135,6 +138,7 @@ public class FoodController {
 	}
 	
 	@DeleteMapping("/id/{foodID}")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<?> deleteFoodItemByID(@PathVariable @Min(1) int foodID) throws NoRecordsFoundException {
 		if (foodService.existsByID(foodID)) {
 			foodService.deleteFoodByID(foodID);

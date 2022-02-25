@@ -1,5 +1,6 @@
 package com.cogent.fooddeliveryapp.controller;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -76,25 +77,33 @@ public class AuthController {
 				address.setCustomer(customer);
 				return address;
 			}).collect(Collectors.toSet()));
-			customer.setRoles(request.getRoles().parallelStream().map(roleName -> {
-				Role role = null;
-				
-				switch (roleName) {
-					case "admin":
-						role = roleService.getRoleByName(UserRoles.ROLE_ADMIN).orElseThrow(() -> {
-							throw new RoleNotFoundException("Role name: " + roleName + " not found");
-						});
-						break;
-					case "user":
-					default:
-						role = roleService.getRoleByName(UserRoles.ROLE_USER).orElseThrow(() -> {
-							throw new RoleNotFoundException("Role name: " + roleName + " not found");
-						});
-						break;
-				}
-				
-				return role;
-			}).collect(Collectors.toSet()));
+
+			if (request.getRoles() == null) {
+				Role role = roleService.getRoleByName(UserRoles.ROLE_USER).orElseThrow(() -> {
+					throw new RoleNotFoundException("Role not found");
+				});
+				customer.setRoles(Collections.singleton(role));
+			} else {
+				customer.setRoles(request.getRoles().parallelStream().map(roleName -> {
+					Role role = null;
+					
+					switch (roleName) {
+						case "admin":
+							role = roleService.getRoleByName(UserRoles.ROLE_ADMIN).orElseThrow(() -> {
+								throw new RoleNotFoundException("Role name: " + roleName + " not found");
+							});
+							break;
+						case "user":
+						default:
+							role = roleService.getRoleByName(UserRoles.ROLE_USER).orElseThrow(() -> {
+								throw new RoleNotFoundException("Role name: " + roleName + " not found");
+							});
+							break;
+					}
+					
+					return role;
+				}).collect(Collectors.toSet()));
+			}
 			
 			Customer created = customerService.addCustomer(customer);
 			
@@ -109,11 +118,13 @@ public class AuthController {
 		Authentication authentication = authManager.authenticate(
 				new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 		
-		SecurityContextHolder.getContext().setAuthentication(authentication);
+		// Adds the authentication object to our Security environment
+		// SecurityContext: Interface defining the minimum security information associated with the current thread of execution. 
+		SecurityContextHolder.getContext().setAuthentication(authentication); // Changes the currently authenticated principal, or removes the authentication information.
 		
 		String jwt = jwtUtils.generateToken(authentication);
 		
-		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal(); // The identity of the principal being authenticated: the UserDetails
 		
 		List<String> roles = userDetails.getAuthorities().parallelStream()
 				.map(authorities -> {

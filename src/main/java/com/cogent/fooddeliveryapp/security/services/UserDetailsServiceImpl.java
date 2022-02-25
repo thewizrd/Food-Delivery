@@ -1,5 +1,7 @@
 package com.cogent.fooddeliveryapp.security.services;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,6 +22,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Autowired
 	private CustomerRepository customerRepo;
 
+	@Transactional // NOTE: fixes issue with lazy loading user roles
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		Customer user = customerRepo.findCustomerByEmail(username).orElseThrow(() -> {

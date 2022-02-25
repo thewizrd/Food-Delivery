@@ -54,6 +54,8 @@ public class JwtUtils {
 	
 	private Jws<Claims> parseToken(String authToken) {
 		try {
+			// JWT: unsigned JWT (not cryptographically signed)
+			// JWS: signed JWT (cryptographically signed)
 			return Jwts.parser()
 					.setSigningKey(jwtSecret) // use secret key to decrypt 
 					.parseClaimsJws(authToken); // parses the jwt token

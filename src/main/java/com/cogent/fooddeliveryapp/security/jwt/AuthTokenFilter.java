@@ -56,7 +56,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 			}
 			
 			// Continues down the filter chain
-			filterChain.doFilter(request, response);
+			filterChain.doFilter(request, response); // or goes to DispatcherServlet
 		} catch (Exception e) {
 			sLogger.error("Error: {}", e.getMessage());
 		}
