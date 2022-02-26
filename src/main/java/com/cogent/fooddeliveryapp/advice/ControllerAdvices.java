@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.cogent.fooddeliveryapp.exceptions.CustomerNotFoundException;
+import com.cogent.fooddeliveryapp.exceptions.FoodNotFoundException;
 import com.cogent.fooddeliveryapp.exceptions.InvalidRequestException;
 import com.cogent.fooddeliveryapp.exceptions.NoRecordsFoundException;
 import com.cogent.fooddeliveryapp.exceptions.RoleNotFoundException;
@@ -29,6 +31,20 @@ import com.cogent.fooddeliveryapp.payload.response.ApiError;
 public class ControllerAdvices extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(RoleNotFoundException.class)
 	public ResponseEntity<?> handleRoleNotFoundException(RoleNotFoundException e) {
+		ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST);
+		apiError.setMessage(e.getMessage());
+		return buildResponseEntity(apiError);
+	}
+	
+	@ExceptionHandler(CustomerNotFoundException.class)
+	public ResponseEntity<?> handleCustomerNotFoundException(CustomerNotFoundException e) {
+		ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST);
+		apiError.setMessage(e.getMessage());
+		return buildResponseEntity(apiError);
+	}
+	
+	@ExceptionHandler(FoodNotFoundException.class)
+	public ResponseEntity<?> handleFoodNotFoundException(FoodNotFoundException e) {
 		ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST);
 		apiError.setMessage(e.getMessage());
 		return buildResponseEntity(apiError);
@@ -61,6 +77,13 @@ public class ControllerAdvices extends ResponseEntityExceptionHandler {
 		apiError.setMessage("Validation Error");
 		apiError.addValidationErrors(e.getConstraintViolations());
 
+		return buildResponseEntity(apiError);
+	}
+	
+	@ExceptionHandler(AccessDeniedException.class)
+	public ResponseEntity<?> handleAccessDeniedException(AccessDeniedException e) {
+		ApiError apiError = new ApiError(HttpStatus.FORBIDDEN);
+		apiError.setMessage(e.getMessage());
 		return buildResponseEntity(apiError);
 	}
 

@@ -72,7 +72,7 @@ public class AuthController {
 			customer.setPassword(passwordEncoder.encode(request.getPassword())); // encode password
 			customer.setName(request.getName());
 			customer.setDoj(request.getDoj());		
-			customer.setAddresses(request.getAddress().parallelStream().map(addressRequest -> {
+			customer.setAddresses(request.getAddress().stream().map(addressRequest -> {
 				Address address = addressMapper.apply(addressRequest);
 				address.setCustomer(customer);
 				return address;
@@ -126,7 +126,7 @@ public class AuthController {
 		
 		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal(); // The identity of the principal being authenticated: the UserDetails
 		
-		List<String> roles = userDetails.getAuthorities().parallelStream()
+		List<String> roles = userDetails.getAuthorities().stream()
 				.map(authorities -> {
 					return authorities.getAuthority();
 				}).collect(Collectors.toList());

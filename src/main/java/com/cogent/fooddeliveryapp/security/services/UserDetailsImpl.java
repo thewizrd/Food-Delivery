@@ -9,6 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.cogent.fooddeliveryapp.dto.Customer;
+import com.cogent.fooddeliveryapp.enums.UserRoles;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
@@ -31,7 +32,7 @@ public class UserDetailsImpl implements UserDetails {
 	private Collection<? extends GrantedAuthority> authorities;
 	
 	public static UserDetailsImpl build(Customer user) {
-		List<GrantedAuthority> authorities = user.getRoles().parallelStream().map(role -> {
+		List<GrantedAuthority> authorities = user.getRoles().stream().map(role -> {
 			return new SimpleGrantedAuthority(role.getRoleName().name());
 		}).collect(Collectors.toList());
 		
@@ -50,6 +51,14 @@ public class UserDetailsImpl implements UserDetails {
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return authorities;
+	}
+	
+	public boolean isAdmin() {
+		if (authorities != null && authorities.contains(new SimpleGrantedAuthority(UserRoles.ROLE_ADMIN.name()))) {
+			return true;
+		}
+		
+		return false;
 	}
 
 	@Override

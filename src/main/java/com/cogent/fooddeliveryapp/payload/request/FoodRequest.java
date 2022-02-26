@@ -9,6 +9,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 
 import com.cogent.fooddeliveryapp.enums.FoodTypes;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Feature;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,6 +33,7 @@ public class FoodRequest {
 	private BigDecimal foodCost;
 	@NotNull
 	@Enumerated(EnumType.STRING)
+	@JsonFormat(with = { Feature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, Feature.ACCEPT_CASE_INSENSITIVE_VALUES }) 
 	private FoodTypes foodType;
 	@NotBlank
 	private String description;

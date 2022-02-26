@@ -28,7 +28,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
  * @date Feb 23, 2022-12:30:24 PM
  */
 @Component
-//@PropertySource("classpath:application.yaml")
+//@PropertySource("classpath:application.yaml") -- loads the whole property file
 public class JwtUtils {
 	private static final Logger sLogger = LoggerFactory.getLogger(JwtUtils.class);
 

@@ -1,5 +1,6 @@
 package com.cogent.fooddeliveryapp.dto;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -7,13 +8,17 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * CustomerCart
@@ -21,17 +26,27 @@ import lombok.Data;
  * @author bryan
  * @date Feb 22, 2022-12:16:48 PM
  */
-//@Data
-//@AllArgsConstructor
-//@NoArgsConstructor
-//@Entity
-//@Table
+@Data
+@EqualsAndHashCode(exclude = { "customer" })
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString(exclude = { "customer" })
+@Entity
+@Table
 public class CustomerCart {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	private boolean status;
+	private boolean active;
 	
-	//@ManyToMany(cascade = CascadeType.ALL, mappedBy = "")
-	private Set<Food> cartItems;
+	@OneToMany(mappedBy = "customerCart", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnore
+	private Set<CartItem> cartItems = new HashSet<>();
+	
+	@OneToOne(optional = false)
+	private Customer customer;
+	
+	public CustomerCart(Customer user) {
+		this.customer = user;
+	}
 }
