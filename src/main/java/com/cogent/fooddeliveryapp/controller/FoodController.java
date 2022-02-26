@@ -1,6 +1,5 @@
 package com.cogent.fooddeliveryapp.controller;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -57,7 +56,7 @@ public class FoodController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(created);
 	}
 	
-	@GetMapping("/id/{foodID}")
+	@GetMapping("/get/id/{foodID}")
 	public ResponseEntity<?> getFoodItemByID(@PathVariable @Min(1) int foodID) throws NoRecordsFoundException {
 		Food item = foodService.getFoodByID(foodID).orElseThrow(() -> {
 			return new NoRecordsFoundException("Food item with ID: " + foodID + " not found");
@@ -85,7 +84,7 @@ public class FoodController {
 		return ResponseEntity.ok(new FoodResponse(updated));
 	}
 	
-	@GetMapping
+	@GetMapping("/get")
 	public ResponseEntity<?> getAllFoodItems() throws NoRecordsFoundException {
 		List<Food> foods = foodService.getAllFoods();
 		
@@ -98,7 +97,7 @@ public class FoodController {
 		}
 	}
 	
-	@GetMapping("/asc")
+	@GetMapping("/get/asc")
 	public ResponseEntity<?> getAllFoodItemsAsc() throws NoRecordsFoundException {
 		List<Food> foods = foodService.getAllFoodsAscByID();
 		
@@ -111,7 +110,7 @@ public class FoodController {
 		}
 	}
 	
-	@GetMapping("/desc")
+	@GetMapping("/get/desc")
 	public ResponseEntity<?> getAllFoodItemsDesc() throws NoRecordsFoundException {
 		List<Food> foods = foodService.getAllFoodsDescByID();
 		
@@ -124,7 +123,12 @@ public class FoodController {
 		}
 	}
 	
-	@GetMapping("/foodType/{foodType}")
+	@GetMapping("/get/foodType")
+	public ResponseEntity<?> getFoodTypes() throws NoRecordsFoundException {
+		return ResponseEntity.ok(FoodTypes.values());
+	}
+	
+	@GetMapping("/get/foodType/{foodType}")
 	public ResponseEntity<?> getAllFoodItemsByType(@PathVariable FoodTypes foodType) throws NoRecordsFoundException {
 		List<Food> foods = foodService.getAllFoodsByFoodType(foodType);
 		

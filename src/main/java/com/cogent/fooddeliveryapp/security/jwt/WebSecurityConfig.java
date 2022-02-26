@@ -98,10 +98,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		.authorizeRequests()
 			.antMatchers("/api/auth/**")
 				.permitAll() // any user permitted
-			.antMatchers("/api/food/**")
-				.authenticated()
+			.antMatchers("/api/food/get/**")
+				.permitAll() // Food retrieval allowed by all
 			.anyRequest()
-				.authenticated(); // end point allowed by authenticated users
+				.authenticated(); // other end points only allowed by authenticated users
 
 		http.addFilterBefore(jwtAuthTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 	}
