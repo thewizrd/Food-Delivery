@@ -39,27 +39,23 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		try {
-			// Extract the token
-			String jwtToken = parseJwt(request);
+		// Extract the token
+		String jwtToken = parseJwt(request);
+		
+		// Validate it
+		if (jwtToken != null && jwtUtils.validateJwtToken(jwtToken)) {
+			String username = jwtUtils.getUsernameFromJwtToken(jwtToken);
+			UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 			
-			// Validate it
-			if (jwtToken != null && jwtUtils.validateJwtToken(jwtToken)) {
-				String username = jwtUtils.getUsernameFromJwtToken(jwtToken);
-				UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-				
-				UsernamePasswordAuthenticationToken upAuthoken = 
-						new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities()); // Credentials not needed after successful authentication
-				upAuthoken.setDetails(new WebAuthenticationDetails(request)); // WebAuthDetails: handles the authentication
-				
-				SecurityContextHolder.getContext().setAuthentication(upAuthoken);
-			}
+			UsernamePasswordAuthenticationToken upAuthoken = 
+					new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities()); // Credentials not needed after successful authentication
+			upAuthoken.setDetails(new WebAuthenticationDetails(request)); // WebAuthDetails: handles the authentication
 			
-			// Continues down the filter chain
-			filterChain.doFilter(request, response); // or goes to DispatcherServlet
-		} catch (Exception e) {
-			sLogger.error("Error: {}", e.getMessage());
+			SecurityContextHolder.getContext().setAuthentication(upAuthoken);
 		}
+		
+		// Continues down the filter chain
+		filterChain.doFilter(request, response); // or goes to DispatcherServlet
 	}
 	
 	private String parseJwt(HttpServletRequest request) {
