@@ -25,6 +25,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FoodResponse {
+	private long foodID;
 	@NotBlank
 	private String foodName;
 	@PositiveOrZero
@@ -39,6 +40,7 @@ public class FoodResponse {
 	private String foodPic;
 	
 	public FoodResponse(Food food) {
+		this.foodID = food.getId();
 		this.foodName = food.getName();
 		this.foodCost = food.getFoodCost();
 		this.foodType = food.getFoodType();

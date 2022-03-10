@@ -1,6 +1,7 @@
 package com.cogent.fooddeliveryapp.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -89,7 +90,9 @@ public class FoodController {
 		List<Food> foods = foodService.getAllFoods();
 		
 		if (foods != null && !foods.isEmpty()) {
-			return ResponseEntity.ok(foods);
+			return ResponseEntity.ok(foods.stream().map(f -> {
+				return new FoodResponse(f);
+			}).collect(Collectors.toList()));
 		} else {
 			//return ResponseEntity.ok(Collections.emptyList());
 			//return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiMessage("No foods found"));
@@ -102,7 +105,9 @@ public class FoodController {
 		List<Food> foods = foodService.getAllFoodsAscByID();
 		
 		if (foods != null && !foods.isEmpty()) {
-			return ResponseEntity.ok(foods);
+			return ResponseEntity.ok(foods.stream().map(f -> {
+				return new FoodResponse(f);
+			}).collect(Collectors.toList()));
 		} else {
 			//return ResponseEntity.ok(Collections.emptyList());
 			//return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiMessage("No foods found"));
@@ -115,7 +120,9 @@ public class FoodController {
 		List<Food> foods = foodService.getAllFoodsDescByID();
 		
 		if (foods != null && !foods.isEmpty()) {
-			return ResponseEntity.ok(foods);
+			return ResponseEntity.ok(foods.stream().map(f -> {
+				return new FoodResponse(f);
+			}).collect(Collectors.toList()));
 		} else {
 			//return ResponseEntity.ok(Collections.emptyList());
 			//return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiMessage("No foods found"));
@@ -133,7 +140,9 @@ public class FoodController {
 		List<Food> foods = foodService.getAllFoodsByFoodType(foodType);
 		
 		if (foods != null && !foods.isEmpty()) {
-			return ResponseEntity.ok(foods);
+			return ResponseEntity.ok(foods.stream().map(f -> {
+				return new FoodResponse(f);
+			}).collect(Collectors.toList()));
 		} else {
 			//return ResponseEntity.ok(Collections.emptyList());
 			//return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiMessage("No foods found"));
