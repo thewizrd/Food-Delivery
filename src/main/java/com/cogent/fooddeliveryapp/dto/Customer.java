@@ -1,6 +1,7 @@
 package com.cogent.fooddeliveryapp.dto;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -60,7 +61,7 @@ public class Customer {
 
 	@NotNull
 	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-	private Set<Address> addresses;
+	private Set<Address> addresses = new HashSet<>();
 
 	@ManyToMany
 	@JoinTable(
@@ -69,7 +70,7 @@ public class Customer {
 			inverseJoinColumns = @JoinColumn(name = "role_id")
 	)
 	@JsonIgnore
-	private Set<Role> roles;
+	private Set<Role> roles = new HashSet<>();
 	
 	@OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
 	@JsonIgnore
