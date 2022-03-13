@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +34,7 @@ import com.cogent.fooddeliveryapp.service.FoodService;
  * @author bryan
  * @date Feb 22, 2022-9:23:14 AM
  */
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/food")
 // @RestController == @Controller + @ResponseBody
@@ -54,7 +56,7 @@ public class FoodController {
 		Food created = foodService.addFood(food);
 		
 		// HTTP 201: Create for new entities
-		return ResponseEntity.status(HttpStatus.CREATED).body(created);
+		return ResponseEntity.status(HttpStatus.CREATED).body(new FoodResponse(created));
 	}
 	
 	@GetMapping("/get/id/{foodID}")
