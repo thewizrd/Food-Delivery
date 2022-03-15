@@ -82,7 +82,7 @@ public class AuthController {
 
 			if (request.getRoles() == null) {
 				Role role = roleService.getRoleByName(UserRoles.ROLE_USER).orElseThrow(() -> {
-					throw new RoleNotFoundException("Role not found");
+					return new RoleNotFoundException("Role not found");
 				});
 				customer.setRoles(Collections.singleton(role));
 			} else {
@@ -92,13 +92,13 @@ public class AuthController {
 					switch (roleName) {
 						case "admin":
 							role = roleService.getRoleByName(UserRoles.ROLE_ADMIN).orElseThrow(() -> {
-								throw new RoleNotFoundException("Role name: " + roleName + " not found");
+								return new RoleNotFoundException("Role name: " + roleName + " not found");
 							});
 							break;
 						case "user":
 						default:
 							role = roleService.getRoleByName(UserRoles.ROLE_USER).orElseThrow(() -> {
-								throw new RoleNotFoundException("Role name: " + roleName + " not found");
+								return new RoleNotFoundException("Role name: " + roleName + " not found");
 							});
 							break;
 					}
