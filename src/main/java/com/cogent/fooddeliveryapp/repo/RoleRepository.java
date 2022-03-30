@@ -15,6 +15,6 @@ import com.cogent.fooddeliveryapp.enums.UserRoles;
  * @date Feb 18, 2022-4:04:48 PM
  */
 @Repository
-public interface RoleRepository extends JpaRepository<Role, Integer> {
+public interface RoleRepository extends JpaRepository<Role, Long> {
 	Optional<Role> findRoleByRoleName(UserRoles roleName);
 }

@@ -8,8 +8,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.cogent.fooddeliveryapp.dto.Customer;
-import com.cogent.fooddeliveryapp.repo.CustomerRepository;
+import com.cogent.fooddeliveryapp.dto.User;
+import com.cogent.fooddeliveryapp.repo.UserRepository;
 
 /**
  * UserDetailsServiceImpl
@@ -20,12 +20,12 @@ import com.cogent.fooddeliveryapp.repo.CustomerRepository;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 	@Autowired
-	private CustomerRepository customerRepo;
+	private UserRepository userRepo;
 
 	@Transactional // NOTE: fixes issue with lazy loading user roles
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Customer user = customerRepo.findCustomerByEmail(username).orElseThrow(() -> {
+		User user = userRepo.findByEmail(username).orElseThrow(() -> {
 			return new UsernameNotFoundException("User with username: " + username + " not found");
 		});
 		

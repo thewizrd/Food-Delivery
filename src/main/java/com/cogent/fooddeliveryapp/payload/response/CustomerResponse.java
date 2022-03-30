@@ -23,7 +23,7 @@ import lombok.Data;
  */
 @Data
 public class CustomerResponse {
-	private int id;	
+	private long id;	
 	private String email;
 	private String name;
 	@JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd")

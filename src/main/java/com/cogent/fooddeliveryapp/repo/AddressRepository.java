@@ -12,6 +12,6 @@ import com.cogent.fooddeliveryapp.dto.Address;
  * @date Feb 18, 2022-3:43:16 PM
  */
 @Repository
-public interface AddressRepository extends JpaRepository<Address, Integer> {
+public interface AddressRepository extends JpaRepository<Address, Long> {
 
 }

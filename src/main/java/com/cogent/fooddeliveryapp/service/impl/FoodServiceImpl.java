@@ -31,7 +31,7 @@ public class FoodServiceImpl implements FoodService {
 	}
 
 	@Override
-	public Optional<Food> getFoodByID(int id) {
+	public Optional<Food> getFoodByID(Long id) {
 		return repo.findById(id);
 	}
 
@@ -56,7 +56,7 @@ public class FoodServiceImpl implements FoodService {
 	}
 
 	@Override
-	public boolean deleteFoodByID(int id) {
+	public boolean deleteFoodByID(Long id) {
 		Food foodRef = repo.getById(id);
 		repo.delete(foodRef);
 		return true;
@@ -72,7 +72,7 @@ public class FoodServiceImpl implements FoodService {
 	}
 
 	@Override
-	public boolean existsByID(int id) {
+	public boolean existsByID(Long id) {
 		return repo.existsById(id);
 	}
 

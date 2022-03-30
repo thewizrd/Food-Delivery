@@ -68,25 +68,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		 * ** Allows/permits loading resources from another domain
 		 * CSRF: Cross-Site Request Forgery
 		 */
-		/* OLD
-		http.cors()
-			.and()
-			.csrf()
-				.disable()
-			.exceptionHandling()
-				.authenticationEntryPoint(authEntryPointJwt)
-			.and()
-			.sessionManagement()
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Using token based authentication
-			.and()
-			.authorizeRequests()
-				.antMatchers("/api/auth/**")
-					.permitAll() // any user permitted
-				.antMatchers("/api/food/**")
-					.permitAll()
-					.anyRequest()
-					.authenticated(); // end point allowed by authenticated users
-		*/
 		http.cors()
 		.and()
 		.csrf()

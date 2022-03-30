@@ -30,13 +30,13 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Optional<Customer> getCustomerByID(int id) {
+	public Optional<Customer> getCustomerByID(Long id) {
 		return repo.findById(id);
 	}
 	
 	@Override
 	public Optional<Customer> getCustomerByEmail(String emailAddress) {
-		return repo.findCustomerByEmail(emailAddress);
+		return repo.findByEmail(emailAddress);
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public boolean deleteCustomerByID(int id) {
+	public boolean deleteCustomerByID(Long id) {
 		Customer customerRef = repo.getById(id);
 		repo.delete(customerRef);
 		return true;
@@ -71,7 +71,7 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public boolean existsByID(int id) {
+	public boolean existsByID(Long id) {
 		return repo.existsById(id);
 	}
 

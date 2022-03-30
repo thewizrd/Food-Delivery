@@ -12,5 +12,5 @@ import lombok.Data;
  */
 @Data
 public class CartUpdateRequest {
-	private List<Integer> cart;
+	private List<Long> cart;
 }

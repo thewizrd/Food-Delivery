@@ -33,7 +33,7 @@ import lombok.ToString;
 public class CartItem {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int cartItemID;
+	private long cartItemID;
 
 	@ManyToOne(optional = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)

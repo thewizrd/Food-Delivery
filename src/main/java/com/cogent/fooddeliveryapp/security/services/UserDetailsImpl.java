@@ -9,6 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.cogent.fooddeliveryapp.dto.Customer;
+import com.cogent.fooddeliveryapp.dto.User;
 import com.cogent.fooddeliveryapp.enums.UserRoles;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -24,14 +25,14 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(exclude = { "username", "password", "authorities" })
 public class UserDetailsImpl implements UserDetails {
-	private int id;
+	private long id;
 	private String username;
 	@JsonIgnore
 	private String password;
 	
 	private Collection<? extends GrantedAuthority> authorities;
 	
-	public static UserDetailsImpl build(Customer user) {
+	public static UserDetailsImpl build(User user) {
 		List<GrantedAuthority> authorities = user.getRoles().stream().map(role -> {
 			return new SimpleGrantedAuthority(role.getRoleName().name());
 		}).collect(Collectors.toList());
@@ -39,7 +40,7 @@ public class UserDetailsImpl implements UserDetails {
 		return new UserDetailsImpl(user.getId(), user.getEmail(), user.getPassword(), authorities);
 	}
 	
-	private UserDetailsImpl(int id, String username, String password,
+	private UserDetailsImpl(long id, String username, String password,
 			Collection<? extends GrantedAuthority> authorities) {
 		super();
 		this.id = id;

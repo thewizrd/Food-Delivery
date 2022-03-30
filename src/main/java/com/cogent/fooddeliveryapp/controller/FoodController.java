@@ -1,5 +1,6 @@
 package com.cogent.fooddeliveryapp.controller;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,8 @@ import com.cogent.fooddeliveryapp.exceptions.NoRecordsFoundException;
 import com.cogent.fooddeliveryapp.payload.request.FoodRequest;
 import com.cogent.fooddeliveryapp.payload.response.FoodResponse;
 import com.cogent.fooddeliveryapp.service.FoodService;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Feature;
 
 /**
  * FoodController
@@ -42,7 +45,7 @@ import com.cogent.fooddeliveryapp.service.FoodService;
 public class FoodController {
 	@Autowired
 	private FoodService foodService;
-	
+
 	@PostMapping
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<?> addFoodItem(@Valid @RequestBody FoodRequest request) {
@@ -52,109 +55,102 @@ public class FoodController {
 		food.setFoodType(request.getFoodType());
 		food.setDescription(request.getDescription());
 		food.setFoodPicURL(request.getFoodPic());
-		
+
 		Food created = foodService.addFood(food);
-		
+
 		// HTTP 201: Create for new entities
 		return ResponseEntity.status(HttpStatus.CREATED).body(new FoodResponse(created));
 	}
-	
+
 	@GetMapping("/get/id/{foodID}")
-	public ResponseEntity<?> getFoodItemByID(@PathVariable @Min(1) int foodID) throws NoRecordsFoundException {
+	public ResponseEntity<?> getFoodItemByID(@PathVariable @Min(1) Long foodID) throws NoRecordsFoundException {
 		Food item = foodService.getFoodByID(foodID).orElseThrow(() -> {
 			return new NoRecordsFoundException("Food item with ID: " + foodID + " not found");
 		});
-		
+
 		return ResponseEntity.ok(new FoodResponse(item));
 	}
-	
+
 	@PutMapping("/id/{foodID}")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ResponseEntity<?> updateFoodItemByID(@PathVariable @Min(1) int foodID, @Valid @RequestBody FoodRequest request) throws NoRecordsFoundException {
+	public ResponseEntity<?> updateFoodItemByID(@PathVariable @Min(1) Long foodID,
+			@Valid @RequestBody FoodRequest request) throws NoRecordsFoundException {
 		Food item = foodService.getFoodByID(foodID).orElseThrow(() -> {
 			return new NoRecordsFoundException("Food item with ID: " + foodID + " not found");
 		});
-		
+
 		item.setName(request.getFoodName());
 		item.setFoodCost(request.getFoodCost());
 		item.setFoodType(request.getFoodType());
 		item.setDescription(request.getDescription());
 		item.setFoodPicURL(request.getFoodPic());
-		
+
 		Food updated = foodService.updateFood(item);
-		
-		// Either 200: OK or 201: No Content 
+
+		// Either 200: OK or 201: No Content
 		return ResponseEntity.ok(new FoodResponse(updated));
 	}
-	
+
 	@GetMapping("/get")
 	public ResponseEntity<?> getAllFoodItems() throws NoRecordsFoundException {
 		List<Food> foods = foodService.getAllFoods();
-		
-		if (foods != null && !foods.isEmpty()) {
+
+		if (foods != null) {
 			return ResponseEntity.ok(foods.stream().map(f -> {
 				return new FoodResponse(f);
 			}).collect(Collectors.toList()));
 		} else {
-			//return ResponseEntity.ok(Collections.emptyList());
-			//return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiMessage("No foods found"));
-			throw new NoRecordsFoundException("No foods found");
+			return ResponseEntity.ok(Collections.emptyList());
 		}
 	}
-	
+
 	@GetMapping("/get/asc")
 	public ResponseEntity<?> getAllFoodItemsAsc() throws NoRecordsFoundException {
 		List<Food> foods = foodService.getAllFoodsAscByID();
-		
-		if (foods != null && !foods.isEmpty()) {
+
+		if (foods != null) {
 			return ResponseEntity.ok(foods.stream().map(f -> {
 				return new FoodResponse(f);
 			}).collect(Collectors.toList()));
 		} else {
-			//return ResponseEntity.ok(Collections.emptyList());
-			//return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiMessage("No foods found"));
-			throw new NoRecordsFoundException("No foods found");
+			return ResponseEntity.ok(Collections.emptyList());
 		}
 	}
-	
+
 	@GetMapping("/get/desc")
 	public ResponseEntity<?> getAllFoodItemsDesc() throws NoRecordsFoundException {
 		List<Food> foods = foodService.getAllFoodsDescByID();
-		
-		if (foods != null && !foods.isEmpty()) {
+
+		if (foods != null) {
 			return ResponseEntity.ok(foods.stream().map(f -> {
 				return new FoodResponse(f);
 			}).collect(Collectors.toList()));
 		} else {
-			//return ResponseEntity.ok(Collections.emptyList());
-			//return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiMessage("No foods found"));
-			throw new NoRecordsFoundException("No foods found");
+			return ResponseEntity.ok(Collections.emptyList());
 		}
 	}
-	
+
 	@GetMapping("/get/foodType")
 	public ResponseEntity<?> getFoodTypes() throws NoRecordsFoundException {
 		return ResponseEntity.ok(FoodTypes.values());
 	}
-	
+
 	@GetMapping("/get/foodType/{foodType}")
 	public ResponseEntity<?> getAllFoodItemsByType(@PathVariable FoodTypes foodType) throws NoRecordsFoundException {
 		List<Food> foods = foodService.getAllFoodsByFoodType(foodType);
-		
-		if (foods != null && !foods.isEmpty()) {
+
+		if (foods != null) {
 			return ResponseEntity.ok(foods.stream().map(f -> {
 				return new FoodResponse(f);
 			}).collect(Collectors.toList()));
 		} else {
-			//return ResponseEntity.ok(Collections.emptyList());
-			//return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiMessage("No foods found"));
-			throw new NoRecordsFoundException("No foods found for type: " + foodType.name());
+			return ResponseEntity.ok(Collections.emptyList());
 		}
 	}
-	
+
 	@DeleteMapping("/id/{foodID}")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ResponseEntity<?> deleteFoodItemByID(@PathVariable @Min(1) int foodID) throws NoRecordsFoundException {
+	public ResponseEntity<?> deleteFoodItemByID(@PathVariable @Min(1) Long foodID) throws NoRecordsFoundException {
 		if (foodService.existsByID(foodID)) {
 			foodService.deleteFoodByID(foodID);
 			// Use 204: No content for deletion

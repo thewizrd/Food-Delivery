@@ -24,19 +24,8 @@ public class RoleServiceImpl implements RoleService {
 	@Autowired
 	private RoleRepository repo;
 
-	@PostConstruct
-	private void initializeRoles() {
-		UserRoles[] roles = UserRoles.values();
-		for (UserRoles role : roles) {
-			Optional<Role> roleEntity = getRoleByName(role);
-			if (!roleEntity.isPresent()) {
-				repo.save(new Role(role));
-			}
-		}
-	}
-
 	@Override
-	public Optional<Role> getRoleByID(int roleID) {
+	public Optional<Role> getRoleByID(Long roleID) {
 		return repo.findById(roleID);
 	}
 

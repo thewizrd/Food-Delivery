@@ -33,7 +33,7 @@ import lombok.NoArgsConstructor;
 public class Food {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private long id;
 	@NotBlank
 	private String name;
 	@PositiveOrZero

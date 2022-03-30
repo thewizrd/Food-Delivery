@@ -39,7 +39,7 @@ import lombok.NoArgsConstructor;
 public class Role {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int roleID;
+	private long roleID;
 	@Column(unique = true)
 	@NotNull
 	@Enumerated(EnumType.STRING)

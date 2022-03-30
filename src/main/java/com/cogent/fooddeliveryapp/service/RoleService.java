@@ -13,7 +13,7 @@ import com.cogent.fooddeliveryapp.enums.UserRoles;
  * @date Feb 18, 2022-4:35:05 PM
  */
 public interface RoleService {
-	Optional<Role> getRoleByID(int roleID);
+	Optional<Role> getRoleByID(Long roleID);
 	List<Role> getAllRoles();
 	Optional<Role> getRoleByName(UserRoles roleName);
 }

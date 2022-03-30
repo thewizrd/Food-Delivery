@@ -14,13 +14,13 @@ import com.cogent.fooddeliveryapp.exceptions.CustomerNotFoundException;
  */
 public interface CustomerService {
 	Customer addCustomer(Customer customer);
-	Optional<Customer> getCustomerByID(int id);
+	Optional<Customer> getCustomerByID(Long id);
 	Optional<Customer> getCustomerByEmail(String emailAddress);
 	List<Customer> getAllCustomers();
-	boolean deleteCustomerByID(int id);
+	boolean deleteCustomerByID(Long id);
 	Customer updateCustomer(Customer customer) throws CustomerNotFoundException;
 	List<Customer> getAllCustomersAscOrder();
 	List<Customer> getAllCustomersDescOrder();
-	boolean existsByID(int id);
+	boolean existsByID(Long id);
 	boolean existsByEmail(String emailAddress);
 }

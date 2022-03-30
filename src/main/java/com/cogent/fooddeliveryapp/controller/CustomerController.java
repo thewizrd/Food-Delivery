@@ -71,7 +71,7 @@ public class CustomerController {
 	
 	// Checks if user has access to this item
 	// Only ADMINs or the specified user can access
-	private void checkUserAccess(int userID) {
+	private void checkUserAccess(Long userID) {
 		Authentication auth = getAuthentication();
 		UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
 		
@@ -89,7 +89,7 @@ public class CustomerController {
 			return ResponseEntity.ok(customers.stream().map(user -> {
 				return new CustomerResponse(user);
 			}).sorted((o1, o2) -> {
-				return Integer.compare(o1.getId(), o2.getId());
+				return Long.compare(o1.getId(), o2.getId());
 			}).collect(Collectors.toList()));
 		} else {
 			throw new NoRecordsFoundException("No Customer records found");
@@ -98,7 +98,7 @@ public class CustomerController {
 	
 	@GetMapping("/{userID}")
 	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_USER')")
-	public ResponseEntity<?> getUserByID(@PathVariable int userID) throws NoRecordsFoundException {
+	public ResponseEntity<?> getUserByID(@PathVariable Long userID) throws NoRecordsFoundException {
 		checkUserAccess(userID);
 		
 		Optional<Customer> customerOpt = customerService.getCustomerByID(userID);
@@ -111,7 +111,7 @@ public class CustomerController {
 	
 	@PutMapping("/{userID}")
 	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_USER')")
-	public ResponseEntity<?> updateUserByID(@PathVariable int userID, @Valid @RequestBody CustomerRegistrationRequest request) throws NoRecordsFoundException, CustomerNotFoundException, InvalidRequestException {
+	public ResponseEntity<?> updateUserByID(@PathVariable Long userID, @Valid @RequestBody CustomerRegistrationRequest request) throws NoRecordsFoundException, CustomerNotFoundException, InvalidRequestException {
 		checkUserAccess(userID);
 		
 		Optional<Customer> customerOpt = customerService.getCustomerByID(userID);
@@ -162,7 +162,7 @@ public class CustomerController {
 	
 	@DeleteMapping("/{userID}")
 	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_USER')")
-	public ResponseEntity<?> deleteUserByID(@PathVariable int userID) throws NoRecordsFoundException {
+	public ResponseEntity<?> deleteUserByID(@PathVariable Long userID) throws NoRecordsFoundException {
 		checkUserAccess(userID);
 
 		boolean exists = customerService.existsByID(userID);
@@ -178,7 +178,7 @@ public class CustomerController {
 	/* Customer Cart operations */
 	@GetMapping("/{userID}/cart")
 	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_USER')")
-	public ResponseEntity<?> getUserCartByID(@PathVariable int userID) throws NoRecordsFoundException, CustomerNotFoundException {
+	public ResponseEntity<?> getUserCartByID(@PathVariable Long userID) throws NoRecordsFoundException, CustomerNotFoundException {
 		checkUserAccess(userID);
 		
 		Customer customer = customerService.getCustomerByID(userID).orElseThrow(() -> {
@@ -190,7 +190,7 @@ public class CustomerController {
 	
 	@PutMapping("/{userID}/cart")
 	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_USER')")
-	public ResponseEntity<?> updateUserCartByID(@PathVariable int userID, @Valid @RequestBody CartUpdateRequest request) throws NoRecordsFoundException, CustomerNotFoundException {
+	public ResponseEntity<?> updateUserCartByID(@PathVariable Long userID, @Valid @RequestBody CartUpdateRequest request) throws NoRecordsFoundException, CustomerNotFoundException {
 		checkUserAccess(userID);
 		
 		Customer customer = customerService.getCustomerByID(userID).orElseThrow(() -> {
@@ -216,7 +216,7 @@ public class CustomerController {
 	
 	@PutMapping("/{userID}/cart/checkout")
 	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_USER')")
-	public ResponseEntity<?> checkoutUserCartByID(@PathVariable int userID) throws NoRecordsFoundException, CustomerNotFoundException {
+	public ResponseEntity<?> checkoutUserCartByID(@PathVariable Long userID) throws NoRecordsFoundException, CustomerNotFoundException {
 		checkUserAccess(userID);
 		
 		Customer customer = customerService.getCustomerByID(userID).orElseThrow(() -> {

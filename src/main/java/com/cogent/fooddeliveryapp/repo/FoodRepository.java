@@ -15,6 +15,6 @@ import com.cogent.fooddeliveryapp.enums.FoodTypes;
  * @date Feb 22, 2022-9:40:01 AM
  */
 @Repository
-public interface FoodRepository extends JpaRepository<Food, Integer> {
+public interface FoodRepository extends JpaRepository<Food, Long> {
 	List<Food> findAllByFoodType(FoodTypes foodType);
 }

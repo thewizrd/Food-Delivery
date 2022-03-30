@@ -36,7 +36,7 @@ import lombok.ToString;
 public class CustomerCart {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private long id;
 	private boolean active;
 	
 	@OneToMany(mappedBy = "customerCart", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -15,12 +15,12 @@ import com.cogent.fooddeliveryapp.exceptions.NoRecordsFoundException;
  */
 public interface FoodService {
 	Food addFood(Food food);
-	Optional<Food> getFoodByID(int id);
+	Optional<Food> getFoodByID(Long id);
 	List<Food> getAllFoods();
 	List<Food> getAllFoodsByFoodType(FoodTypes foodType);
 	List<Food> getAllFoodsAscByID();
 	List<Food> getAllFoodsDescByID();
-	boolean deleteFoodByID(int id);
+	boolean deleteFoodByID(Long id);
 	Food updateFood(Food food) throws NoRecordsFoundException;
-	boolean existsByID(int id);
+	boolean existsByID(Long id);
 }
