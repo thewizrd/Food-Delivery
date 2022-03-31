@@ -25,11 +25,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cogent.fooddeliveryapp.dto.Food;
 import com.cogent.fooddeliveryapp.enums.FoodTypes;
 import com.cogent.fooddeliveryapp.exceptions.NoRecordsFoundException;
+import com.cogent.fooddeliveryapp.payload.request.CartUpdateRequest;
 import com.cogent.fooddeliveryapp.payload.request.FoodRequest;
 import com.cogent.fooddeliveryapp.payload.response.FoodResponse;
 import com.cogent.fooddeliveryapp.service.FoodService;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonFormat.Feature;
 
 /**
  * FoodController
@@ -124,6 +123,25 @@ public class FoodController {
 		if (foods != null) {
 			return ResponseEntity.ok(foods.stream().map(f -> {
 				return new FoodResponse(f);
+			}).collect(Collectors.toList()));
+		} else {
+			return ResponseEntity.ok(Collections.emptyList());
+		}
+	}
+
+	@PostMapping("/get/cart")
+	public ResponseEntity<?> getCartItemsDetails(@Valid @RequestBody CartUpdateRequest request)
+			throws NoRecordsFoundException {
+		if (request.getCart() != null) {
+			return ResponseEntity.ok(request.getCart().stream().map(f -> {
+				try {
+					Food foodItem = foodService.getFoodByID(f).orElseThrow(() -> {
+						return new NoRecordsFoundException("Food item with ID: " + f + " not found");
+					});
+					return new FoodResponse(foodItem);
+				} catch (NoRecordsFoundException e) {
+					throw new RuntimeException(e);
+				}
 			}).collect(Collectors.toList()));
 		} else {
 			return ResponseEntity.ok(Collections.emptyList());

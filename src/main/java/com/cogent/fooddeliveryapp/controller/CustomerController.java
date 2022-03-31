@@ -214,6 +214,77 @@ public class CustomerController {
 		return ResponseEntity.ok(new CartStatusResponse(customer.getCustomerCart()));
 	}
 	
+	@PutMapping("/{userID}/cart/add")
+	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_USER')")
+	public ResponseEntity<?> addToUserCartByID(@PathVariable Long userID, @Valid @RequestBody CartUpdateRequest request) throws NoRecordsFoundException, CustomerNotFoundException {
+		checkUserAccess(userID);
+		
+		Customer customer = customerService.getCustomerByID(userID).orElseThrow(() -> {
+			return new NoRecordsFoundException("Customer with ID: " + userID + " not found");
+		});
+		
+		CustomerCart cart = customer.getCustomerCart();
+		cart.getCartItems().addAll(request.getCart().stream().map(foodID -> {
+			Food foodItem = foodService.getFoodByID(foodID).orElseThrow(() -> {
+				return new FoodNotFoundException("Food with ID: " + foodID + " not found");
+			});
+			
+			return new CartItem(foodItem, cart);
+		}).collect(Collectors.toSet()));
+		cart.setActive(true);
+		
+		// Update customer
+		customer = customerService.updateCustomer(customer);
+
+		return ResponseEntity.ok(new CartStatusResponse(customer.getCustomerCart()));
+	}
+	
+	@PutMapping("/{userID}/cart/add/{foodID}")
+	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_USER')")
+	public ResponseEntity<?> addToUserCartByID(@PathVariable Long userID, @PathVariable Long foodID) throws NoRecordsFoundException, CustomerNotFoundException {
+		checkUserAccess(userID);
+		
+		Customer customer = customerService.getCustomerByID(userID).orElseThrow(() -> {
+			return new NoRecordsFoundException("Customer with ID: " + userID + " not found");
+		});
+		
+		CustomerCart cart = customer.getCustomerCart();
+
+		Food foodItem = foodService.getFoodByID(foodID).orElseThrow(() -> {
+			return new FoodNotFoundException("Food with ID: " + foodID + " not found");
+		});
+
+		cart.getCartItems().add(new CartItem(foodItem, cart));
+		cart.setActive(true);
+		
+		// Update customer
+		customer = customerService.updateCustomer(customer);
+
+		return ResponseEntity.ok(new CartStatusResponse(customer.getCustomerCart()));
+	}
+	
+	@PutMapping("/{userID}/cart/remove/{foodID}")
+	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_USER')")
+	public ResponseEntity<?> removeItemFromUserCartByID(@PathVariable Long userID, @PathVariable Long foodID) throws NoRecordsFoundException, CustomerNotFoundException {
+		checkUserAccess(userID);
+		
+		Customer customer = customerService.getCustomerByID(userID).orElseThrow(() -> {
+			return new NoRecordsFoundException("Customer with ID: " + userID + " not found");
+		});
+		
+		CustomerCart cart = customer.getCustomerCart();
+
+		cart.getCartItems().removeIf((cartItem) -> {
+			return cartItem.getFood().getId() == foodID;
+		});
+		cart.setActive(true);
+		
+		// Update customer
+		customer = customerService.updateCustomer(customer);
+
+		return ResponseEntity.ok(new CartStatusResponse(customer.getCustomerCart()));
+	}
+	
 	@PutMapping("/{userID}/cart/checkout")
 	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_USER')")
 	public ResponseEntity<?> checkoutUserCartByID(@PathVariable Long userID) throws NoRecordsFoundException, CustomerNotFoundException {
