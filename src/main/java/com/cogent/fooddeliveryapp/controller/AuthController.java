@@ -1,5 +1,6 @@
 package com.cogent.fooddeliveryapp.controller;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -73,7 +74,7 @@ public class AuthController {
 			customer.setEmail(request.getEmail());
 			customer.setPassword(passwordEncoder.encode(request.getPassword())); // encode password
 			customer.setName(request.getName());
-			customer.setDoj(request.getDoj());		
+			customer.setDoj(LocalDate.now());		
 			customer.setAddresses(request.getAddress().stream().map(addressRequest -> {
 				Address address = addressMapper.apply(addressRequest);
 				address.setCustomer(customer);

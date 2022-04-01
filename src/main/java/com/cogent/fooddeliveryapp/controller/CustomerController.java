@@ -38,6 +38,7 @@ import com.cogent.fooddeliveryapp.exceptions.RoleNotFoundException;
 import com.cogent.fooddeliveryapp.payload.request.AddressRequest;
 import com.cogent.fooddeliveryapp.payload.request.CartUpdateRequest;
 import com.cogent.fooddeliveryapp.payload.request.CustomerRegistrationRequest;
+import com.cogent.fooddeliveryapp.payload.request.CustomerUpdateRequest;
 import com.cogent.fooddeliveryapp.payload.response.CartStatusResponse;
 import com.cogent.fooddeliveryapp.payload.response.CustomerResponse;
 import com.cogent.fooddeliveryapp.security.services.UserDetailsImpl;
@@ -111,45 +112,19 @@ public class CustomerController {
 	
 	@PutMapping("/{userID}")
 	@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_USER')")
-	public ResponseEntity<?> updateUserByID(@PathVariable Long userID, @Valid @RequestBody CustomerRegistrationRequest request) throws NoRecordsFoundException, CustomerNotFoundException, InvalidRequestException {
+	public ResponseEntity<?> updateUserByID(@PathVariable Long userID, @Valid @RequestBody CustomerUpdateRequest request) throws NoRecordsFoundException, CustomerNotFoundException, InvalidRequestException {
 		checkUserAccess(userID);
 		
 		Optional<Customer> customerOpt = customerService.getCustomerByID(userID);
 		if (customerOpt.isPresent()) {
 			final Customer customer = customerOpt.get();
 			
-			if (!Objects.equals(customer.getEmail(), request.getEmail())) {
-				throw new InvalidRequestException("Email address does not match. Email address must remain the same");
-			}
-			
-			// Update user details
-			customer.setEmail(request.getEmail());
-			customer.setPassword(request.getPassword());
 			customer.setName(request.getName());
-			customer.setDoj(request.getDoj());		
+
 			customer.setAddresses(request.getAddress().stream().map(addressRequest -> {
 				Address address = addressMapper.apply(addressRequest);
 				address.setCustomer(customer);
 				return address;
-			}).collect(Collectors.toSet()));
-			customer.setRoles(request.getRoles().parallelStream().map(roleName -> {
-				Role role = null;
-				
-				switch (roleName) {
-					case "admin":
-						role = roleService.getRoleByName(UserRoles.ROLE_ADMIN).orElseThrow(() -> {
-							return new RoleNotFoundException("Role name: " + roleName + " not found");
-						});
-						break;
-					case "user":
-					default:
-						role = roleService.getRoleByName(UserRoles.ROLE_USER).orElseThrow(() -> {
-							return new RoleNotFoundException("Role name: " + roleName + " not found");
-						});
-						break;
-				}
-				
-				return role;
 			}).collect(Collectors.toSet()));
 			
 			Customer updated = customerService.updateCustomer(customer);
