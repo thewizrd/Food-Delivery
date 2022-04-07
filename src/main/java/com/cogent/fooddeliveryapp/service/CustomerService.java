@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import com.cogent.fooddeliveryapp.dto.Customer;
+import com.cogent.fooddeliveryapp.dto.Order;
 import com.cogent.fooddeliveryapp.exceptions.CustomerNotFoundException;
+import com.cogent.fooddeliveryapp.exceptions.InvalidRequestException;
 
 /**
  * CustomerService
@@ -23,4 +25,6 @@ public interface CustomerService {
 	List<Customer> getAllCustomersDescOrder();
 	boolean existsByID(Long id);
 	boolean existsByEmail(String emailAddress);
+	
+	Order checkoutOrder(Customer customer) throws InvalidRequestException;
 }

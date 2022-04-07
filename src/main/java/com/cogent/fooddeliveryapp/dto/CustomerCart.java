@@ -1,5 +1,6 @@
 package com.cogent.fooddeliveryapp.dto;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,15 +39,25 @@ public class CustomerCart {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	private boolean active;
-	
+
 	@OneToMany(mappedBy = "customerCart", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
 	private Set<CartItem> cartItems = new HashSet<>();
-	
+
 	@OneToOne(optional = false)
 	private Customer customer;
-	
+
 	public CustomerCart(Customer user) {
 		this.customer = user;
+	}
+
+	public BigDecimal getTotal() {
+		BigDecimal amount = BigDecimal.ZERO;
+
+		for (CartItem ci : cartItems) {
+			amount = amount.add(ci.getFood().getFoodCost());
+		}
+
+		return amount;
 	}
 }

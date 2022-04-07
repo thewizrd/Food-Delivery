@@ -1,6 +1,8 @@
 package com.cogent.fooddeliveryapp.dto;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -27,7 +29,7 @@ import lombok.ToString;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = { "addresses" })
+@ToString(exclude = { "addresses", "orders" })
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table
@@ -39,4 +41,7 @@ public class Customer extends User {
 	@OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
 	@JsonIgnore
 	private CustomerCart customerCart = new CustomerCart(this);
+	
+	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+	private List<Order> orders = new ArrayList<>();
 }

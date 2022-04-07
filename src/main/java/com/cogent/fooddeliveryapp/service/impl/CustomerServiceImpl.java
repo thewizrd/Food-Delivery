@@ -1,16 +1,24 @@
 package com.cogent.fooddeliveryapp.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
 import com.cogent.fooddeliveryapp.dto.Customer;
+import com.cogent.fooddeliveryapp.dto.CustomerCart;
+import com.cogent.fooddeliveryapp.dto.Order;
+import com.cogent.fooddeliveryapp.dto.OrderItem;
 import com.cogent.fooddeliveryapp.exceptions.CustomerNotFoundException;
+import com.cogent.fooddeliveryapp.exceptions.InvalidRequestException;
 import com.cogent.fooddeliveryapp.repo.CustomerRepository;
+import com.cogent.fooddeliveryapp.repo.OrderRespository;
 import com.cogent.fooddeliveryapp.service.CustomerService;
 
 /**
@@ -23,6 +31,8 @@ import com.cogent.fooddeliveryapp.service.CustomerService;
 public class CustomerServiceImpl implements CustomerService {
 	@Autowired
 	private CustomerRepository repo;
+	@Autowired
+	private OrderRespository orderRepo;
 
 	@Override
 	public Customer addCustomer(Customer customer) {
@@ -33,7 +43,7 @@ public class CustomerServiceImpl implements CustomerService {
 	public Optional<Customer> getCustomerByID(Long id) {
 		return repo.findById(id);
 	}
-	
+
 	@Override
 	public Optional<Customer> getCustomerByEmail(String emailAddress) {
 		return repo.findByEmail(emailAddress);
@@ -62,12 +72,12 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public List<Customer> getAllCustomersAscOrder() {
-		return repo.findAll(Sort.by(Order.asc("id")));
+		return repo.findAll(Sort.by(Sort.Order.asc("id")));
 	}
 
 	@Override
 	public List<Customer> getAllCustomersDescOrder() {
-		return repo.findAll(Sort.by(Order.desc("id")));
+		return repo.findAll(Sort.by(Sort.Order.desc("id")));
 	}
 
 	@Override
@@ -78,5 +88,35 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public boolean existsByEmail(String emailAddress) {
 		return repo.existsByEmail(emailAddress);
+	}
+
+	@Transactional
+	@Override
+	public Order checkoutOrder(Customer customer) throws InvalidRequestException {
+		CustomerCart cart = customer.getCustomerCart();
+		
+		// Create order and add to database
+		Order order = new Order(customer);
+		order.setOrderDate(LocalDateTime.now());
+		order.setAddress(customer.getAddresses().stream().findFirst().orElseThrow(() -> {
+			return new InvalidRequestException("No address found for customer");
+		}));
+
+		order.setOrderItems(cart.getCartItems().stream().map((ci) -> {
+			return new OrderItem(ci.getFood(), order);
+		}).collect(Collectors.toSet()));
+
+		order.setOrderTotal(cart.getTotal());
+		
+		Order updateOrder = orderRepo.save(order);
+
+		// Then clear cart
+		cart.getCartItems().clear();
+		cart.setActive(false);
+
+		// Update customer
+		repo.save(customer);
+		
+		return updateOrder;
 	}
 }
